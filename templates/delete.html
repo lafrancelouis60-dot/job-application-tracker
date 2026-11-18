@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Delete {{ info.name|lower }}?</h1>
+<p>{{ row[info.columns[0]] }} · Record #{{ row[info.pk] }}</p>
+
+<form method="post">
+  <input type="hidden" name="token" value="{{ token }}">
+  <button>Yes, delete</button>
+  <a href="{{ url_for('detail', table=table, record_id=row[info.pk]) }}">Cancel</a>
+</form>
+{% endblock %}

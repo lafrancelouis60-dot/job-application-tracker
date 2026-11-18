@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Application Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <strong>Job Application Tracker</strong>
+    <nav aria-label="Main menu">
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      {% for name in tables %}
+        <a href="{{ url_for('records', table=name) }}">{{ name|title }}</a>
+      {% endfor %}
+      <a href="{{ url_for('job_match') }}">Job Match</a>
+    </nav>
+  </header>
+
+  <main>
+    {% for message in get_flashed_messages() %}
+      <p class="notice" role="alert">{{ message }}</p>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

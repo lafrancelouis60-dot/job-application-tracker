@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ info.name }} details</h1>
+
+<dl class="panel">
+  {% for field in info.fields %}
+    <dt>{{ label(field) }}</dt>
+    <dd>
+      {% if field == 'company_id' %}
+        <a href="{{ url_for('detail', table='companies', record_id=row.company_id) }}">
+          {{ row.company_name }}
+        </a>
+      {% elif field == 'job_id' %}
+        <a href="{{ url_for('detail', table='jobs', record_id=row.job_id) }}">
+          {{ row.job_title }}
+        </a> at {{ row.company_name }}
+      {% elif field == 'cover_letter_sent' %}
+        {{ "Yes" if row[field] else "No" }}
+      {% else %}
+        {{ row[field] if row[field] is not none else '—' }}
+      {% endif %}
+    </dd>
+  {% endfor %}
+</dl>
+
+<p class="actions">
+  <a href="{{ url_for('form', table=table, record_id=row[info.pk]) }}">Edit</a>
+  <a href="{{ url_for('delete_record', table=table, record_id=row[info.pk]) }}">Delete</a>
+  <a href="{{ url_for('records', table=table) }}">Back to {{ table }}</a>
+</p>
+{% endblock %}

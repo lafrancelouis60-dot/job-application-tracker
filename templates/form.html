@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ "Edit" if record_id else "Add" }} {{ info.name|lower }}</h1>
+<p>Fields marked * are required.</p>
+
+{% if 'company_id' in options and not options['company_id'] %}
+  <p class="notice"><a href="{{ url_for('form', table='companies') }}">Add a company first.</a></p>
+{% elif 'job_id' in options and not options['job_id'] %}
+  <p class="notice"><a href="{{ url_for('form', table='jobs') }}">Add a job first.</a></p>
+{% endif %}
+
+<form method="post" class="panel">
+  <input type="hidden" name="token" value="{{ token }}">
+
+  {% for field in info.fields %}
+    {% set value = values.get(field) %}
+    <label for="{{ field }}">{{ label(field) }}{{ " *" if field in required }}</label>
+
+    {% if field in options %}
+      <select id="{{ field }}" name="{{ field }}" required>
+        <option value="">Choose one</option>
+        {% for key, text in options[field].items() %}
+          <option value="{{ key }}" {{ 'selected' if value|string == key }}>{{ text }}</option>
+        {% endfor %}
+      </select>
+
+    {% elif field == 'cover_letter_sent' %}
+      <input id="{{ field }}" name="{{ field }}" type="checkbox" value="1"
+             {{ 'checked' if value in [1, '1', true] }}>
+
+    {% elif field in ['notes', 'interview_data'] %}
+      <textarea id="{{ field }}" name="{{ field }}" rows="3">{{ value or '' }}</textarea>
+      {% if field == 'interview_data' %}
+        <small>Example: {"round": 1, "format": "Video"}</small>
+      {% endif %}
+
+    {% else %}
+      <input id="{{ field }}" name="{{ field }}" type="{{ types.get(field, 'text') }}"
+             value="{{ value if value is not none else '' }}"
+             {{ 'required' if field in required }}
+             {% if field in limits %}maxlength="{{ limits[field] }}"{% endif %}
+             {% if types.get(field) == 'number' %}min="0" step="1"{% endif %}>
+      {% if field == 'requirements' %}
+        <small>Separate skills with commas, like SQL, Python, Excel.</small>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  <p><button>Save</button> <a href="{{ url_for('records', table=table) }}">Cancel</a></p>
+</form>
+{% endblock %}
