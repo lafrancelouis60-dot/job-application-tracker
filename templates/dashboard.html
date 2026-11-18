@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="cards">
+  {% for name, count in counts.items() %}
+    <a class="panel" href="{{ url_for('records', table=name) }}">
+      {{ name|title }} <strong>{{ count }}</strong>
+    </a>
+  {% endfor %}
+</div>
+
+<h2>Applications by status</h2>
+<table>
+  <tr><th>Status</th><th>Count</th></tr>
+  {% for status in statuses %}
+    <tr><td>{{ status }}</td><td>{{ by_status.get(status, 0) }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

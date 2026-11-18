@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Job Match</h1>
+
+<form method="post" class="panel">
+  <input type="hidden" name="token" value="{{ token }}">
+  <label for="skills">Your skills, separated by commas</label>
+  <input id="skills" name="skills" value="{{ entered }}" placeholder="SQL, Python, Excel" required>
+  <p><button>Find matches</button></p>
+</form>
+
+{% if results is not none %}
+  <h2>Matching jobs</h2>
+  {% for job in results %}
+    <article class="panel">
+      <h3>
+        <a href="{{ url_for('detail', table='jobs', record_id=job.job_id) }}">{{ job.job_title }}</a>
+      </h3>
+      <p>{{ job.company_name }}</p>
+      {% if job.total %}
+        <p><strong>{{ job.percent }}%</strong> ({{ job.matched|length }}/{{ job.total }} skills)</p>
+        <p>Matched: {{ job.matched|join(', ') or 'None' }}</p>
+        <p>Missing: {{ job.missing|join(', ') or 'None' }}</p>
+      {% else %}
+        <p>N/A · No required skills listed.</p>
+      {% endif %}
+    </article>
+  {% else %}
+    <p>Add a job to see matches.</p>
+  {% endfor %}
+{% endif %}
+{% endblock %}
